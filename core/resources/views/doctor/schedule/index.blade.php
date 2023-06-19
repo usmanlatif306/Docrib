@@ -22,8 +22,8 @@
                                 <div class="form-group">
                                     <label>@lang('For How Many Days')
                                         <i class="fa fa-info-circle text--primary" title="@lang('This will define that your appointment booking will be taken for the next how many days including today. That means with everyday it will add your given value.')">
-                                    </i>
-                                </label>
+                                        </i>
+                                    </label>
                                     <div class="input-group">
                                         <input class="form-control" type="number" name="serial_day"
                                             value="{{ $doctor->serial_day }}" required>
@@ -62,7 +62,7 @@
                                     <div class="input-group">
                                         <input type="text" name="duration" class="form-control"
                                             value="{{ old('duration', $doctor->duration) }}">
-                                            <span class="input-group-text">@lang('Minutes')</span>
+                                        <span class="input-group-text">@lang('Minutes')</span>
                                     </div>
                                 </div>
                             </div>
@@ -109,7 +109,7 @@
 @endsection
 
 @push('style-lib')
-    <link rel="stylesheet" href="{{asset('assets/admin/css/vendor/datepicker.min.css')}}">
+    <link rel="stylesheet" href="{{ asset('assets/admin/css/vendor/datepicker.min.css') }}">
 @endpush
 
 @push('script-lib')

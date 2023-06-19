@@ -446,3 +446,7 @@ function passwordGen($length = 8)
     return $randomString;
 }
 
+function carbon($date)
+{
+    return Carbon::parse($date);
+}

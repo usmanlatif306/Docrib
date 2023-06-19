@@ -81,7 +81,7 @@
                                     @endif
                                 </div>
                             </div>
-                            <div class="form-group">
+                            {{-- <div class="form-group">
                                 <label class="mb-2 date-label">@lang('Select Date')</label>
                                 <select name="booking_date" class="form-control" required>
                                     <option selected disabled>@lang('Select One')</option>
@@ -89,8 +89,9 @@
                                         <option value="{{ $date }}">{{ __($date) }}</option>
                                     @endforeach
                                 </select>
-                            </div>
-                            <h3 class="py-2">@lang('Available Schedule')</h3>
+                            </div> --}}
+
+                            {{-- <h3 class="py-2">@lang('Available Schedule')</h3>
                             <hr>
                             <div class="time-serial-parent mt-3">
                                 @foreach ($doctor->serial_or_slot as $item)
@@ -99,10 +100,29 @@
                                         data-value="{{ $item }}">{{ __($item) }}</button>
                                 @endforeach
                             </div>
-                            <input type="hidden" name="time_serial" required>
+                            <input type="hidden" name="time_serial" required> --}}
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="mb-2 date-label">@lang('Select Date')</label>
+                                        <input type="date" class="form-control" name="booking_date" id=""
+                                            min="{{ now()->format('Y-m-d') }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="mb-2 date-label">@lang('Select Time')</label>
+                                        <input type="text" class="form-control time-picker" name="time_serial"
+                                            id="">
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="calendar"></div>
                         </div>
                     </div>
                 </div>
+
                 <div class="card b-radius--10 overflow-hidden box--shadow1 mt-4">
                     <div class="card-body p-0">
                         <div class="row p-3 bg--white">
@@ -161,7 +181,33 @@
     </div>
 @endsection
 
+@push('style-lib')
+    <link rel="stylesheet" href="{{ asset('assets/admin/css/vendor/datepicker.min.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/@fullcalendar/core/main.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid/main.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/@fullcalendar/timegrid/main.css" rel="stylesheet" />
+@endpush
+
+@push('script-lib')
+    <script src="{{ asset('assets/admin/js/vendor/datepicker.min.js') }}"></script>
+    <script src="{{ asset('assets/admin/js/vendor/datepicker.en.js') }}"></script>
+@endpush
+
 @push('script')
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'timeGridWeek',
+                slotMinTime: "{{ $data['slot_min_time'] }}",
+                slotMaxTime: "{{ $data['slot_max_time'] }}",
+                events: @json($data['events']),
+            });
+            calendar.render();
+        });
+    </script>
+
     <script>
         (function($) {
             "use strict";
@@ -200,6 +246,23 @@
                     }
                 });
             });
+
+            initTimePicker();
+
+            function initTimePicker() {
+                var start = new Date();
+                start.setHours(9);
+                start.setMinutes(0);
+
+                $('.time-picker').datepicker({
+                    onlyTimepicker: true,
+                    timepicker: true,
+                    startDate: start,
+                    language: 'en',
+                    minHours: 0,
+                    maxHours: 23,
+                });
+            }
 
         })(jQuery);
     </script>
