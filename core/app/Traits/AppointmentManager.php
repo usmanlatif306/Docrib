@@ -51,8 +51,29 @@ trait AppointmentManager
             array_push($availableDate, date('Y-m-d', strtotime($date)));
             $date->addDays(1);
         }
+
+        // Getting doctor all prevoius appointments
+        $data['events'] = [];
+
+        $appointments = Appointment::newAppointment()->where('doctor_id', $doctor->id)->get();
+
+        foreach ($appointments as $appointment) {
+            $date = $appointment->booking_date . ' ' . $appointment->time_serial;
+            $date = substr_replace($date, " ", -3, 1);
+            $start_date = Carbon::parse($date);
+
+            $data['events'][] = [
+                'title' => $appointment->name,
+                'start' => $start_date->toDateTimeString(),
+                'end' => $start_date->addMinutes($doctor->duration)->toDateTimeString(),
+            ];
+        }
+        $data['slot_min_time'] = carbon($doctor->start_time)->toTimeString();
+        $data['slot_max_time'] = carbon($doctor->end_time)->toTimeString();
+        // dd($data);
+
         $pageTitle = 'Make Appointment';
-        return view($this->userType . '.appointment.booking', compact('doctor', 'pageTitle', 'availableDate'));
+        return view($this->userType . '.appointment.booking', compact('doctor', 'pageTitle', 'availableDate', 'data'));
     }
 
     public function availability(Request $request)
@@ -85,10 +106,10 @@ trait AppointmentManager
 
         $timeSerialCheck = $doctor->whereJsonContains('serial_or_slot', $request->time_serial)->exists();
 
-        if (!$timeSerialCheck) {
-            $notify[] = ['error', 'Invalid! Something went wrong'];
-            return back()->withNotify($notify);
-        }
+        // if (!$timeSerialCheck) {
+        //     $notify[] = ['error', 'Invalid! Something went wrong'];
+        //     return back()->withNotify($notify);
+        // }
 
         $existed = Appointment::where('doctor_id', $doctor->id)->where('booking_date', $request->booking_date)->where('time_serial', $request->time_serial)->where('try', Status::YES)->where('is_delete', Status::NO)->exists();
 
@@ -108,7 +129,7 @@ trait AppointmentManager
 
         /**
          *Site: Gateway payment is via online. payment_system is cash==2 and  gateways==1;
-        **/
+         **/
 
         $gateways = ($request->payment_system == 1) ? Status::YES : Status::NO;
         $general  = gs();
@@ -210,7 +231,6 @@ trait AppointmentManager
             $appointment->save();
             $notify[] = ['success', 'Appointed service is done successfully'];
             return back()->withNotify($notify);
-
         } else {
             $notify[] = ['error', 'Something is wrong!'];
             return back()->withNotify($notify);
@@ -240,7 +260,7 @@ trait AppointmentManager
 
         $appointment->save();
 
-        notify( $this->notifyUser($appointment), 'APPOINTMENT_REJECTION', [
+        notify($this->notifyUser($appointment), 'APPOINTMENT_REJECTION', [
             'booking_date' => $appointment->booking_date,
             'time_serial'  => $appointment->time_serial,
             'doctor_name'  => $appointment->doctor->name

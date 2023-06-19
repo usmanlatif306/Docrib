@@ -2,6 +2,10 @@
 /core/public/hot
 /core/public/storage
 /core/storage/*.key
+/core/storage
+/core/storage/framework
+/core/storage/debugbar
+/core/storage/logs
 /core/vendor
 /core/.env
 /core/.env.backup
