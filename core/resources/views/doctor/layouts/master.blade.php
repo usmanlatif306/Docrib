@@ -20,13 +20,12 @@
     <link rel="stylesheet" href="{{ asset('assets/admin/css/app.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/global/css/custom.css') }}">
 
-
     @stack('style')
+    @livewireStyles
 </head>
 
 <body>
     @yield('content')
-
 
     <script src="{{ asset('assets/global/js/jquery-3.6.0.min.js') }}"></script>
     <script src="{{ asset('assets/global/js/bootstrap.bundle.min.js') }}"></script>
@@ -63,8 +62,7 @@
     </script>
 
     @stack('script')
-
-
+    @livewireScripts
 </body>
 
 </html>

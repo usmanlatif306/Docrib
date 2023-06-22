@@ -20,3 +20,12 @@
 /core/*.zip
 *.zip
 /assets
+/core/app/Models/Patient.php
+/core/app/Models/PatientLogin.php
+/core/app/Models/PatientPasswordReset.php
+/core/config/auth.php
+/core/database/factories/PatientFactory.php
+/core/database/migrations/2023_06_19_095958_create_patients_table.php
+/core/database/migrations/2023_06_19_100643_create_patient_password_resets_table.php
+/core/database/migrations/2023_06_19_101039_create_patient_logins_table.php
+/core/database/seeders/PatientSeeder.php

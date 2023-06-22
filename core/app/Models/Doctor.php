@@ -87,14 +87,13 @@ class Doctor extends Authenticatable
     }
 
     // SCOPES
-
     public function scopeActive($query)
     {
         return $query->where('status', Status::ACTIVE);
     }
     public function scopeInactive($query)
     {
-        return$query->where('status', Status::INACTIVE);
+        return $query->where('status', Status::INACTIVE);
     }
 
     public function statusBadge(): Attribute

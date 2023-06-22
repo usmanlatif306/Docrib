@@ -139,6 +139,9 @@ class Appointment extends Model
             return $html;
         });
     }
+
+    public static function procedures(): array
+    {
+        return ['Filling', 'Pulling a tooth out', 'Putting a crown on a tooth', 'Periodontal desease', 'Straightening crowded teeth', 'Aligning teeth, bite and jaws', 'Having a denture', 'Dental implant or bridge made', 'Filter after losing teeth'];
+    }
 }
-
-

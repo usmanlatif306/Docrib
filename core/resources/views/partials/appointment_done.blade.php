@@ -77,7 +77,7 @@
                 $('.email').text(resourse.email);
                 $('.mobile').text(resourse.mobile);
                 $('.bookingDate').text(resourse.booking_date);
-                $('.timeSerial').text(resourse.time_serial);
+                $('.timeSerial').text(resourse.starting + ' - ' + resourse.ending);
                 $('.age').text(resourse.age);
                 $('.appointment_fees').text(resourse.doctor.fees + ' ' + `{{ $general->cur_text }}`);
                 $('.disease').text(resourse.disease);

@@ -21,6 +21,7 @@
     <link rel="stylesheet" href="{{ asset('assets/global/css/custom.css') }}">
 
     @stack('style')
+    @livewireStyles
 </head>
 
 <body>
@@ -62,8 +63,7 @@
     </script>
 
     @stack('script')
-
-
+    @livewireScripts
 </body>
 
 </html>
