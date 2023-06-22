@@ -21,6 +21,8 @@
     <link rel="stylesheet" href="<?php echo e(asset('assets/global/css/custom.css')); ?>">
 
     <?php echo $__env->yieldPushContent('style'); ?>
+    <?php echo \Livewire\Livewire::styles(); ?>
+
 </head>
 
 <body>
@@ -62,7 +64,7 @@
     </script>
 
     <?php echo $__env->yieldPushContent('script'); ?>
-
+    <?php echo \Livewire\Livewire::scripts(); ?>
 
 </body>
 

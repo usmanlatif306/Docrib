@@ -51,26 +51,34 @@ trait AppointmentManager
             array_push($availableDate, date('Y-m-d', strtotime($date)));
             $date->addDays(1);
         }
+        // $data['procedures'] = Appointment::procedures();
 
         // Getting doctor all prevoius appointments
         $data['events'] = [];
 
-        $appointments = Appointment::newAppointment()->where('doctor_id', $doctor->id)->get();
+        $appointments = Appointment::with(['doctor:id,name'])->newAppointment()->get();
 
         foreach ($appointments as $appointment) {
-            $date = $appointment->booking_date . ' ' . $appointment->time_serial;
-            $date = substr_replace($date, " ", -3, 1);
-            $start_date = Carbon::parse($date);
+            $starting = $appointment->booking_date . ' ' . $appointment->starting;
+            $ending = $appointment->booking_date . ' ' . $appointment->ending;
+            $starting_date = Carbon::parse($starting);
+            $ending_date = Carbon::parse($ending);
+            // $starting_date = Carbon::parse(substr_replace($starting, " ", -3, 1));
+            // $ending_date = Carbon::parse(substr_replace($ending, " ", -3, 1));
 
             $data['events'][] = [
-                'title' => $appointment->name,
-                'start' => $start_date->toDateTimeString(),
-                'end' => $start_date->addMinutes($doctor->duration)->toDateTimeString(),
+                'title' => "(" . $appointment->chair . ") " . $appointment->procedure,
+                'start' => $starting_date->toDateTimeString(),
+                'end' => $ending_date->toDateTimeString(),
+                // 'textColor' => 'Appointment at ' . carbon($appointment->starting)->format('h:i A') . ' - ' . carbon($appointment->ending)->format('h:i A') . ' at ' . $appointment->chair . ' on ' . carbon($appointment->booking_date)->toFormattedDateString() . ' for ' . $appointment->doctor?->name . ' for ' . $appointment->procedure . '.'
+                'textColor' => 'Doctor:' . $appointment->doctor?->name . ',Time;' . carbon($appointment->starting)->format('h:i A') . ' - ' . carbon($appointment->ending)->format('h:i A') . ',Chair:' . $appointment->chair . ',Procedure:' . $appointment->procedure
             ];
         }
+
         $data['slot_min_time'] = carbon($doctor->start_time)->toTimeString();
         $data['slot_max_time'] = carbon($doctor->end_time)->toTimeString();
-        // dd($data);
+        $data['start_time'] = substr($data['slot_min_time'], 0, 2);
+        $data['end_time'] = substr($data['slot_max_time'], 0, 2);
 
         $pageTitle = 'Make Appointment';
         return view($this->userType . '.appointment.booking', compact('doctor', 'pageTitle', 'availableDate', 'data'));
@@ -104,19 +112,19 @@ trait AppointmentManager
             return back()->withNotify($notify);
         }
 
-        $timeSerialCheck = $doctor->whereJsonContains('serial_or_slot', $request->time_serial)->exists();
+        // $timeSerialCheck = $doctor->whereJsonContains('serial_or_slot', $request->time_serial)->exists();
 
         // if (!$timeSerialCheck) {
         //     $notify[] = ['error', 'Invalid! Something went wrong'];
         //     return back()->withNotify($notify);
         // }
 
-        $existed = Appointment::where('doctor_id', $doctor->id)->where('booking_date', $request->booking_date)->where('time_serial', $request->time_serial)->where('try', Status::YES)->where('is_delete', Status::NO)->exists();
+        // $existed = Appointment::where('doctor_id', $doctor->id)->where('booking_date', $request->booking_date)->where('starting', $request->starting)->where('try', Status::YES)->where('is_delete', Status::NO)->exists();
 
-        if ($existed) {
-            $notify[] = ['error', 'This time or serial is already booked. Please try another or time or serial'];
-            return back()->withNotify($notify);
-        }
+        // if ($existed) {
+        //     $notify[] = ['error', 'This time or serial is already booked. Please try another or time or serial'];
+        //     return back()->withNotify($notify);
+        // }
 
         if ($this->userType == 'assistant') {
             $doctorCheck = AssistantDoctorTrack::where('assistant_id', auth()->guard('assistant')->id())->where('doctor_id', $doctor->id)->first();
@@ -138,12 +146,15 @@ trait AppointmentManager
         //save
         $appointment               = new Appointment();
         $appointment->booking_date = Carbon::parse($request->booking_date)->format('Y-m-d');
-        $appointment->time_serial  = $request->time_serial;
+        $appointment->starting  = Carbon::parse($request->starting)->toTimeString();
+        $appointment->ending  = Carbon::parse($request->ending)->toTimeString();
         $appointment->name         = $request->name;
         $appointment->email        = $request->email;
         $appointment->mobile       = $mobile;
         $appointment->age          = $request->age;
         $appointment->doctor_id    = $doctor->id;
+        $appointment->procedure      = $request->procedure;
+        $appointment->chair      = $request->chair;
         $appointment->disease      = $request->disease;
         $appointment->try          =  $gateways ? Status::NO : Status::YES;
         $appointment->trx          =  $gateways ?  getTrx() : NULL;
@@ -201,16 +212,20 @@ trait AppointmentManager
         $request->validate(
             [
                 'name'           => 'required|max:40',
+                'procedure'      => 'required',
+                'chair'          => 'required',
                 'booking_date'   => 'required|date|after_or_equal:today',
-                'time_serial'    => 'required',
+                // 'time_serial'    => 'required',
+                'starting'    => 'required',
+                'ending'    => 'required',
                 'email'          => 'required|email',
                 'mobile'         => 'required|max:40',
                 'age'            => 'required|integer|gt:0',
                 'payment_system' => 'nullable|in:1,2',
             ],
-            [
-                'time_serial.required' => 'You did not select any time or Serial',
-            ]
+            // [
+            //     'time_serial.required' => 'You did not select any time or Serial',
+            // ]
         );
     }
 

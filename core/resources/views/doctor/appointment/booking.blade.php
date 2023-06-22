@@ -81,43 +81,9 @@
                                     @endif
                                 </div>
                             </div>
-                            {{-- <div class="form-group">
-                                <label class="mb-2 date-label">@lang('Select Date')</label>
-                                <select name="booking_date" class="form-control" required>
-                                    <option selected disabled>@lang('Select One')</option>
-                                    @foreach ($availableDate as $date)
-                                        <option value="{{ $date }}">{{ __($date) }}</option>
-                                    @endforeach
-                                </select>
-                            </div> --}}
 
-                            {{-- <h3 class="py-2">@lang('Available Schedule')</h3>
-                            <hr>
-                            <div class="time-serial-parent mt-3">
-                                @foreach ($doctor->serial_or_slot as $item)
-                                    <button type="button"
-                                        class="btn btn--primary mr-2 mb-2 available-time item-{{ slug($item) }}"
-                                        data-value="{{ $item }}">{{ __($item) }}</button>
-                                @endforeach
-                            </div>
-                            <input type="hidden" name="time_serial" required> --}}
+                            @livewire('appointment.check-slot', ['doctor' => $doctor])
 
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="mb-2 date-label">@lang('Select Date')</label>
-                                        <input type="date" class="form-control" name="booking_date" id=""
-                                            min="{{ now()->format('Y-m-d') }}">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="mb-2 date-label">@lang('Select Time')</label>
-                                        <input type="text" class="form-control time-picker" name="time_serial"
-                                            id="">
-                                    </div>
-                                </div>
-                            </div>
                             <div id="calendar"></div>
                         </div>
                     </div>
@@ -171,30 +137,30 @@
                                 <textarea name="disease" class="form-control" rows="2" required></textarea>
                             </div>
                             <div class="form-group">
-                                <button type="submit" class="btn btn--primary w-100 h-45">@lang('Submit')</button>
+                                <button type="submit" id="submitButton" class="btn btn--primary w-100 h-45"
+                                    disabled>@lang('Submit')</button>
                             </div>
                         </div>
                     </div>
                 </div>
             </form>
         </div>
+        @include('partials.event-detail')
     </div>
 @endsection
 
 @push('style-lib')
     <link rel="stylesheet" href="{{ asset('assets/admin/css/vendor/datepicker.min.css') }}">
-    <link href="https://cdn.jsdelivr.net/npm/@fullcalendar/core/main.css" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid/main.css" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/@fullcalendar/timegrid/main.css" rel="stylesheet" />
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.3.1/main.min.css' rel='stylesheet' />
 @endpush
 
 @push('script-lib')
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.3.1/main.min.js"></script>
     <script src="{{ asset('assets/admin/js/vendor/datepicker.min.js') }}"></script>
     <script src="{{ asset('assets/admin/js/vendor/datepicker.en.js') }}"></script>
 @endpush
 
 @push('script')
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var calendarEl = document.getElementById('calendar');
@@ -203,6 +169,15 @@
                 slotMinTime: "{{ $data['slot_min_time'] }}",
                 slotMaxTime: "{{ $data['slot_max_time'] }}",
                 events: @json($data['events']),
+                eventClick: function(info) {
+                    let data = info.event.textColor.split(',');
+                    var modal = $('#eventModal');
+                    $('#doctor').text(data[0].split(':')[1]);
+                    $('#time').text(data[1].split(';')[1]);
+                    $('#chair').text(data[2].split(':')[1]);
+                    $('#desease').text(data[3].split(':')[1]);
+                    modal.modal('show');
+                }
             });
             calendar.render();
         });
@@ -251,18 +226,47 @@
 
             function initTimePicker() {
                 var start = new Date();
-                start.setHours(9);
+                start.setHours("{{ $data['start_time'] }}");
                 start.setMinutes(0);
 
-                $('.time-picker').datepicker({
+                var end = new Date();
+                end.setHours("{{ $data['end_time'] }}");
+                end.setMinutes(0);
+
+                $('#starting').datepicker({
                     onlyTimepicker: true,
                     timepicker: true,
                     startDate: start,
+                    endDate: end,
                     language: 'en',
-                    minHours: 0,
-                    maxHours: 23,
+                    // minHours: "{{ $data['start_time'] }}",
+                    // maxHours: "{{ $data['end_time'] }}",
+                    onSelect: function(time) {
+                        Livewire.emit('startTimeSelected', time)
+                    }
+                });
+
+                $('#ending').datepicker({
+                    onlyTimepicker: true,
+                    timepicker: true,
+                    startDate: start,
+                    endDate: end,
+                    language: 'en',
+                    // minHours: "{{ $data['start_time'] }}",
+                    // maxHours: "{{ $data['end_time'] }}",
+                    onSelect: function(time) {
+                        Livewire.emit('endTimeSelected', time)
+                    }
                 });
             }
+
+            window.addEventListener('slotCheck', event => {
+                if (event.detail.result) {
+                    $('#submitButton').removeAttr('disabled');
+                } else {
+                    $('#submitButton').attr('disabled', 'disabled');
+                }
+            })
 
         })(jQuery);
     </script>

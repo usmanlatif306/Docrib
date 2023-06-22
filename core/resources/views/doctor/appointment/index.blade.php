@@ -36,7 +36,7 @@
                                             <td> @php  echo $appointment->trashBadge;  @endphp </td>
                                         @endif
                                         <td>{{ showDateTime($appointment->booking_date) }}</td>
-                                        <td>{{ $appointment->time_serial }}</td>
+                                        <td>{{ $appointment->starting . ' - ' . $appointment->ending }}</td>
                                         <td> @php  echo $appointment->paymentBadge;  @endphp </td>
                                         @if (!request()->routeIs('doctor.appointment.trashed'))
                                             <td> @php  echo $appointment->serviceBadge;  @endphp </td>
@@ -49,7 +49,6 @@
                                                     <i class="las la-desktop"></i> @lang('Details')
                                                 </button>
                                                 @if (request()->routeIs('doctor.appointment.new'))
-
                                                     <button type="button"
                                                         class="btn btn-sm btn-outline--danger confirmationBtn"
                                                         @if (!$appointment->is_delete && !$appointment->payment_status) ''  @else disabled @endif
