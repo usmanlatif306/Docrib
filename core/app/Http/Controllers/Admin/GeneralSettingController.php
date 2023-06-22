@@ -16,7 +16,7 @@ class GeneralSettingController extends Controller
     {
         $pageTitle = 'General Setting';
         $timezones = json_decode(file_get_contents(resource_path('views/admin/partials/timezone.json')));
-        return view('admin.setting.general', compact('pageTitle','timezones'));
+        return view('admin.setting.general', compact('pageTitle', 'timezones'));
     }
 
     public function update(Request $request)
@@ -27,7 +27,7 @@ class GeneralSettingController extends Controller
             'cur_sym'      => 'required|string|max:40',
             'timezone'     => 'required',
             'country_code' => 'required',
-            'base_color'   => 'nullable','regex:/^[a-f0-9]{6}$/i',
+            'base_color'   => 'nullable', 'regex:/^[a-f0-9]{6}$/i',
         ]);
 
         $general = gs();
@@ -39,13 +39,14 @@ class GeneralSettingController extends Controller
         $general->save();
 
         $timezoneFile = config_path('timezone.php');
-        $content = '<?php $timezone = '.$request->timezone.' ?>';
+        $content = '<?php $timezone = ' . $request->timezone . ' ?>';
         file_put_contents($timezoneFile, $content);
         $notify[] = ['success', 'General setting updated successfully'];
         return back()->withNotify($notify);
     }
 
-    public function systemConfiguration(){
+    public function systemConfiguration()
+    {
         $pageTitle = 'System Configuration';
         return view('admin.setting.configuration', compact('pageTitle'));
     }
@@ -74,17 +75,18 @@ class GeneralSettingController extends Controller
     public function logoIconUpdate(Request $request)
     {
         $request->validate([
-            'logo'      => ['image',new FileTypeValidate(['jpg','jpeg','png'])],
-            'logo_dark' => ['image',new FileTypeValidate(['jpg','jpeg','png'])],
-            'favicon'   => ['image',new FileTypeValidate(['png'])],
+            'logo'      => ['image', new FileTypeValidate(['jpg', 'jpeg', 'png'])],
+            'logo_dark' => ['image', new FileTypeValidate(['jpg', 'jpeg', 'png'])],
+            'favicon'   => ['image', new FileTypeValidate(['png'])],
         ]);
         if ($request->hasFile('logo')) {
             try {
                 $path = getFilePath('logoIcon');
+
                 if (!file_exists($path)) {
                     mkdir($path, 0755, true);
                 }
-                Image::make($request->logo)->save($path . '/logo.png');
+                $image = Image::make($request->logo)->save($path . '/logo.png');
             } catch (\Exception $exp) {
                 $notify[] = ['error', 'Couldn\'t upload the logo'];
                 return back()->withNotify($notify);
@@ -121,21 +123,23 @@ class GeneralSettingController extends Controller
         return back()->withNotify($notify);
     }
 
-    public function customCss(){
+    public function customCss()
+    {
         $pageTitle = 'Custom CSS';
-        $file = activeTemplate(true).'css/custom.css';
+        $file = activeTemplate(true) . 'css/custom.css';
         $fileContent = @file_get_contents($file);
-        return view('admin.setting.custom_css',compact('pageTitle','fileContent'));
+        return view('admin.setting.custom_css', compact('pageTitle', 'fileContent'));
     }
 
 
-    public function customCssSubmit(Request $request){
-        $file = activeTemplate(true).'css/custom.css';
+    public function customCssSubmit(Request $request)
+    {
+        $file = activeTemplate(true) . 'css/custom.css';
         if (!file_exists($file)) {
             fopen($file, "w");
         }
-        file_put_contents($file,$request->css);
-        $notify[] = ['success','CSS updated successfully'];
+        file_put_contents($file, $request->css);
+        $notify[] = ['success', 'CSS updated successfully'];
         return back()->withNotify($notify);
     }
 
@@ -183,5 +187,4 @@ class GeneralSettingController extends Controller
         $notify[] = ['success', 'Maintenance mode updated successfully'];
         return back()->withNotify($notify);
     }
-
 }

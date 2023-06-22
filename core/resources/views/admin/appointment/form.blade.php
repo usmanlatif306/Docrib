@@ -1,6 +1,6 @@
 @extends('admin.layouts.app')
 @section('panel')
-<div class="row mb-none-30">
+    <div class="row mb-none-30">
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
@@ -10,7 +10,8 @@
                             <select name="doctor_id" class="select2-basic" required>
                                 <option selected disabled>@lang('Select One')</option>
                                 @foreach ($doctors as $item)
-                                    <option data-resourse="{{$item}}" value="{{ $item->id }}">{{ __($item->name) }}</option>
+                                    <option data-resourse="{{ $item }}" value="{{ $item->id }}">
+                                        {{ __($item->name) }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -32,6 +33,3 @@
         </div>
     </div>
 @endsection
-
-
-
