@@ -5,6 +5,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/clear', function () {
     \Illuminate\Support\Facades\Artisan::call('optimize:clear');
 });
+Route::get('/migration', function () {
+    \Illuminate\Support\Facades\Artisan::call('migrate');
+});
 
 // User Support Ticket
 Route::controller('TicketController')->prefix('ticket')->name('ticket.')->group(function () {

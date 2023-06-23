@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Doctor\Auth;
+namespace App\Http\Controllers\Patient\Auth;
 
 use App\Constants\Status;
 use App\Http\Controllers\Controller;
 use App\Models\DoctorLogin;
+use App\Models\PatientLogin;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Laramin\Utility\Onumoti;
@@ -29,7 +30,7 @@ class LoginController extends Controller
      *
      * @var string
      */
-    public $redirectTo = 'doctor';
+    public $redirectTo = 'patient';
 
     /**
      * Create a new controller instance.
@@ -38,7 +39,7 @@ class LoginController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('doctor.guest')->except('logout');
+        $this->middleware('patient.guest')->except('logout');
     }
 
     /**
@@ -48,8 +49,8 @@ class LoginController extends Controller
      */
     public function showLoginForm()
     {
-        $pageTitle = "Doctor Login";
-        return view('doctor.auth.login', compact('pageTitle'));
+        $pageTitle = "Patient Login";
+        return view('patient.auth.login', compact('pageTitle'));
     }
 
     /**
@@ -59,7 +60,7 @@ class LoginController extends Controller
      */
     protected function guard()
     {
-        return auth()->guard('doctor');
+        return auth()->guard('patient');
     }
 
     public function username()
@@ -105,45 +106,45 @@ class LoginController extends Controller
         if ($user->status == Status::USER_BAN) {
             $this->guard()->logout();
             $notify[] = ['error', 'Your account has been deactivated.'];
-            return to_route('doctor.login')->withNotify($notify);
+            return to_route('patient.login')->withNotify($notify);
         }
 
         $user->save();
         $ip = getRealIP();
-        $exist = DoctorLogin::where('doctor_ip', $ip)->first();
+        $exist = PatientLogin::where('patient_id', $ip)->first();
 
-        $doctorLogin = new DoctorLogin();
+        $patientLogin = new PatientLogin();
         if ($exist) {
-            $doctorLogin->longitude    = $exist->longitude;
-            $doctorLogin->latitude     = $exist->latitude;
-            $doctorLogin->city         = $exist->city;
-            $doctorLogin->country_code = $exist->country_code;
-            $doctorLogin->country      = $exist->country;
+            $patientLogin->longitude    = $exist->longitude;
+            $patientLogin->latitude     = $exist->latitude;
+            $patientLogin->city         = $exist->city;
+            $patientLogin->country_code = $exist->country_code;
+            $patientLogin->country      = $exist->country;
         } else {
             $info = json_decode(json_encode(getIpInfo()), true);
-            $doctorLogin->country      = @implode(',', $info['country']);
-            $doctorLogin->country_code = @implode(',', $info['code']);
-            $doctorLogin->city         = @implode(',', $info['city']);
-            $doctorLogin->longitude    = @implode(',', $info['long']);
-            $doctorLogin->latitude     = @implode(',', $info['lat']);
+            $patientLogin->country      = @implode(',', $info['country']);
+            $patientLogin->country_code = @implode(',', $info['code']);
+            $patientLogin->city         = @implode(',', $info['city']);
+            $patientLogin->longitude    = @implode(',', $info['long']);
+            $patientLogin->latitude     = @implode(',', $info['lat']);
         }
 
         $userAgent              = osBrowser();
-        $doctorLogin->doctor_id = $user->id;
-        $doctorLogin->doctor_ip = $ip;
+        $patientLogin->patient_id = $user->id;
+        $patientLogin->patient_ip = $ip;
 
-        $doctorLogin->browser = @$userAgent['browser'];
-        $doctorLogin->os      = @$userAgent['os_platform'];
-        $doctorLogin->save();
+        $patientLogin->browser = @$userAgent['browser'];
+        $patientLogin->os      = @$userAgent['os_platform'];
+        $patientLogin->save();
 
-        return to_route('doctor.dashboard');
+        return to_route('patient.dashboard');
     }
 
 
     public function logout(Request $request)
     {
-        $this->guard('doctor')->logout();
+        $this->guard('patient')->logout();
         $request->session()->invalidate();
-        return $this->loggedOut($request) ?: redirect('/doctor');
+        return $this->loggedOut($request) ?: redirect('/patient');
     }
 }

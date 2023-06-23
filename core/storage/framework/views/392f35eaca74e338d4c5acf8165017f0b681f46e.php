@@ -30,6 +30,9 @@
                                             <option value="" data-route="<?php echo e(route('staff.login')); ?>"
                                                 data-href="<?php echo e(route('staff.password.reset')); ?>"><?php echo app('translator')->get('Staff'); ?>
                                             </option>
+                                            <option value="" data-route="<?php echo e(route('patient.login')); ?>"
+                                                data-href="<?php echo e(route('patient.password.reset')); ?>"><?php echo app('translator')->get('Patient'); ?>
+                                            </option>
                                         </select>
 
                                     </div>
@@ -68,6 +71,9 @@
                                     </div>
                                     <button type="submit" class="btn cmn-btn w-100"><?php echo app('translator')->get('LOGIN'); ?></button>
                                 </form>
+                                <div class="text-center mt-3">
+                                    <a href="<?php echo e(route('patient.register')); ?>" class="text-white"><?php echo app('translator')->get('Register as Patient'); ?></a>
+                                </div>
                             </div>
                         </div>
                     </div>
