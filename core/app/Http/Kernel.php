@@ -77,6 +77,9 @@ class Kernel extends HttpKernel
         'staff'         => \App\Http\Middleware\RedirectIfNotStaff::class,
         'staff.guest'   => \App\Http\Middleware\RedirectIfStaff::class,
 
+        'patient'         => \App\Http\Middleware\RedirectIfNotPatient::class,
+        'patient.guest'   => \App\Http\Middleware\RedirectIfPatient::class,
+
         'demo' => \App\Http\Middleware\Demo::class,
         'maintenance' => \App\Http\Middleware\MaintenanceMode::class,
     ];
