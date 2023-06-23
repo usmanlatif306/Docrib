@@ -31,6 +31,9 @@
                                             <option value="" data-route="{{ route('staff.login') }}"
                                                 data-href="{{ route('staff.password.reset') }}">@lang('Staff')
                                             </option>
+                                            <option value="" data-route="{{ route('patient.login') }}"
+                                                data-href="{{ route('patient.password.reset') }}">@lang('Patient')
+                                            </option>
                                         </select>
 
                                     </div>
@@ -55,6 +58,9 @@
                                     </div>
                                     <button type="submit" class="btn cmn-btn w-100">@lang('LOGIN')</button>
                                 </form>
+                                <div class="text-center mt-3">
+                                    <a href="{{ route('patient.register') }}" class="text-white">@lang('Register as Patient')</a>
+                                </div>
                             </div>
                         </div>
                     </div>
