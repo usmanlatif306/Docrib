@@ -73,6 +73,15 @@ class AppServiceProvider extends ServiceProvider
             ]);
         });
 
+        /**
+         * * This is the area for patient guard!
+         */
+        view()->composer('patient.partials.sidenav', function ($view) {
+            $view->with([
+                'newAppointmentsCount' => Appointment::where(fn ($q) => $q->where('email', auth()->guard('patient')->user()->email)->orWhere('mobile', auth()->guard('patient')->user()->mobile))->newAppointment()->hasDoctor()->count(),
+            ]);
+        });
+
 
         view()->composer('partials.seo', function ($view) {
             $seo = Frontend::where('data_keys', 'seo.data')->first();

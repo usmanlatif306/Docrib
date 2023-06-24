@@ -22,19 +22,25 @@ class PatientController extends Controller
     {
         $pageTitle   = 'Dashboard';
         $patient      = auth()->guard('patient')->user();
-        $appointment = Appointment::where('email', $patient->id)->where('try', Status::YES)->where('is_delete', Status::NO);
+        $appointment = Appointment::with(['doctor:id,fees'])->where(fn ($q) => $q->where('email', $patient->email)->orWhere('mobile', $patient->mobile))->where('try', Status::YES)->where('is_delete', Status::NO);
 
+        $total_spend = clone $appointment;
         $new  = clone $appointment;
         $done = clone $appointment;
-        // $widget['total_online_earn']      = Deposit::where('doctor_id', $patient->id)->where('status', Status::PAYMENT_SUCCESS)->sum('amount');
-        // $widget['total_cash_earn']        = $patient->balance - $widget['total_online_earn'];
+        $widget['total_money_spend']      = 0;
+        foreach ($total_spend->get() as $appoint) {
+            $widget['total_money_spend'] += $appoint->doctor?->fees;
+        }
+
         $widget['total_new_appointment']  = $new->where('is_complete', Status::APPOINTMENT_INCOMPLETE)->count();
         $widget['total_done_appointment'] = $done->where('is_complete', Status::APPOINTMENT_COMPLETE)->count();
+        $loginLogs      = PatientLogin::where('patient_id',  $patient->id)->orderByDesc('id')->with('patient')->take(10)->get();
+        $widget['total_visits']        = $loginLogs->count();
 
         $assistantsDoctor  = AssistantDoctorTrack::where('doctor_id', auth()->guard('patient')->id())->with('assistant')->whereHas('assistant', function ($q) {
             $q->active();
         })->paginate(getPaginate());
-        $loginLogs      = PatientLogin::where('patient_id',  $patient->id)->orderByDesc('id')->with('patient')->take(10)->get();
+
         return view('patient.dashboard', compact('pageTitle', 'widget', 'patient', 'assistantsDoctor', 'loginLogs'));
     }
 

@@ -15,7 +15,7 @@
                     </a>
                 </li>
 
-                {{-- <li class="sidebar-menu-item sidebar-dropdown">
+                <li class="sidebar-menu-item sidebar-dropdown">
                     <a href="javascript:void(0)" class="{{ menuActive('patient.appointment*', 3) }}">
                         <i class="menu-icon las la-handshake"></i>
                         <span class="menu-title">@lang('Appointments')</span>
@@ -27,12 +27,12 @@
                     </a>
                     <div class="sidebar-submenu {{ menuActive('patient.appointment*', 2) }} ">
                         <ul>
-                            <li class="sidebar-menu-item {{ menuActive('patient.appointment.booking') }} ">
+                            {{-- <li class="sidebar-menu-item {{ menuActive('patient.appointment.booking') }} ">
                                 <a href="{{ route('patient.appointment.booking') }}" class="nav-link">
                                     <i class="menu-icon las la-dot-circle"></i>
                                     <span class="menu-title">@lang('Make Appoinment')</span>
                                 </a>
-                            </li>
+                            </li> --}}
 
                             <li class="sidebar-menu-item {{ menuActive('patient.appointment.new') }} ">
                                 <a href="{{ route('patient.appointment.new') }}" class="nav-link">
@@ -58,7 +58,7 @@
                             </li>
                         </ul>
                     </div>
-                </li> --}}
+                </li>
 
 
                 <li class="sidebar-menu-item sidebar-dropdown">

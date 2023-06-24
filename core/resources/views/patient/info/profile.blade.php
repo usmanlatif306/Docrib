@@ -29,8 +29,32 @@
                             <span class="fw-bold">{{ $patient->email }}</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
-                            @lang('Mobile')
+                            @lang('Gender')
+                            <span class="fw-bold text-capitalize">{{ $patient->gender }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            @lang('Phone Number')
                             <span class="fw-bold">{{ $patient->mobile }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            @lang('Post Office')
+                            <span class="fw-bold">{{ $patient->post_office }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            @lang('Address')
+                            <span class="fw-bold">{{ $patient->address }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            @lang('City')
+                            <span class="fw-bold">{{ $patient->city }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            @lang('Nationality')
+                            <span class="fw-bold">{{ $patient->nationality }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            @lang('Social Security Code')
+                            <span class="fw-bold">{{ $patient->social_security_code }}</span>
                         </li>
                     </ul>
                 </div>
@@ -59,7 +83,8 @@
                                             <div class="avatar-edit">
                                                 <input type="file" class="profilePicUpload" name="image"
                                                     id="profilePicUpload1" accept=".png, .jpg, .jpeg">
-                                                <label for="profilePicUpload1" class="bg--success">@lang('Upload Image')</label>
+                                                <label for="profilePicUpload1"
+                                                    class="bg--success">@lang('Upload Image')</label>
                                                 <small class="mt-2  ">@lang('Supported files'): <b>@lang('jpeg'),
                                                         @lang('jpg').</b> @lang('Image will be resized into 400x400px') </small>
                                             </div>

@@ -1,14 +1,14 @@
 @extends('patient.layouts.app')
 @section('panel')
     <div class="row gy-4">
-        {{-- <div class="col-xxl-3 col-sm-6">
-            <x-widget link="" icon="las la-wallet f-size--56" title="Total Online Earn"
-                value="{{ showAmount($widget['total_online_earn']) }}" bg="primary" />
+        <div class="col-xxl-3 col-sm-6">
+            <x-widget link="" icon="las la-wallet f-size--56" title="Money Spend"
+                value="{{ showAmount($widget['total_money_spend']) }}" bg="primary" />
         </div>
         <div class="col-xxl-3 col-sm-6">
-            <x-widget link="" icon="las la-hand-holding-usd f-size--56" title="Total Cash Earn"
-                value="{{ showAmount($widget['total_cash_earn']) }}" bg="12" />
-        </div> --}}
+            <x-widget link="" icon="las la-globe f-size--56" title="Total Visits" value="{{ $widget['total_visits'] }}"
+                bg="12" />
+        </div>
         <div class="col-xxl-3 col-sm-6">
             <x-widget link="{{ route('patient.appointment.new') }}" icon="lar la-handshake f-size--56"
                 title="Total New Appointment" value="{{ $widget['total_new_appointment'] }}" bg="info" />

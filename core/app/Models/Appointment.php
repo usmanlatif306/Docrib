@@ -16,13 +16,11 @@ class Appointment extends Model
 
     public function doctor()
     {
-
         return $this->belongsTo(Doctor::class);
     }
 
     public function staff()
     {
-
         return $this->belongsTo(Staff::class, 'added_staff_id');
     }
 
@@ -100,7 +98,7 @@ class Appointment extends Model
     {
         return new Attribute(function () {
             $html = '';
-            if ($this->delete_by_admin) {
+            if ($this->added_admin_id) {
                 $html = '<span class="text--small badge badge--primary">' . trans('Admin') . '</span>';
             } elseif ($this->added_staff_id) {
                 $html = '<span>' . trans($this->staff->name) . '</span><br>
@@ -134,6 +132,8 @@ class Appointment extends Model
             } elseif ($this->delete_by_doctor) {
                 $html = '<span>' . trans($this->deletedByDoctor->name) . '</span><br>
                 <span class="text--small badge badge--info">' . trans('Doctor') . '</span>';
+            } else {
+                $html = '<span class="text--small badge badge--primary">' . trans('Self') . '</span>';
             }
 
             return $html;
