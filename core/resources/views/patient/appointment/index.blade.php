@@ -1,4 +1,4 @@
-@extends('doctor.layouts.app')
+@extends('patient.layouts.app')
 @section('panel')
     <div class="row">
         <div class="col-md-12">
@@ -11,13 +11,13 @@
                                     <th>@lang('S.N.')</th>
                                     <th>@lang('Patient') | @lang('Mobile')</th>
                                     <th>@lang('Added By')</th>
-                                    @if (request()->routeIs('doctor.appointment.trashed'))
+                                    @if (request()->routeIs('patient.appointment.trashed'))
                                         <th>@lang('Trashed By')</th>
                                     @endif
                                     <th>@lang('Booking Date')</th>
                                     <th>@lang('Time / Serial No')</th>
                                     <th>@lang('Payment Status')</th>
-                                    @if (!request()->routeIs('doctor.appointment.trashed'))
+                                    @if (!request()->routeIs('patient.appointment.trashed'))
                                         <th>@lang('Service')</th>
                                     @endif
                                     <th>@lang('Action')</th>
@@ -32,13 +32,14 @@
                                             {{ $appointment->mobile }}
                                         </td>
                                         <td> @php  echo $appointment->addedByBadge;  @endphp </td>
-                                        @if (request()->routeIs('doctor.appointment.trashed'))
+                                        @if (request()->routeIs('patient.appointment.trashed'))
                                             <td> @php  echo $appointment->trashBadge;  @endphp </td>
                                         @endif
-                                        <td>{{ showDateTime($appointment->booking_date) }}</td>
-                                        <td>{{ $appointment->time_serial }}</td>
+                                        <td>{{ showDateTime($appointment->booking_date, 'Y-m-d') }}</td>
+                                        <td>{{ showDateTime($appointment->starting, 'h:i a') . ' - ' . showDateTime($appointment->ending, 'h:i a') }}
+                                        </td>
                                         <td> @php  echo $appointment->paymentBadge;  @endphp </td>
-                                        @if (!request()->routeIs('doctor.appointment.trashed'))
+                                        @if (!request()->routeIs('patient.appointment.trashed'))
                                             <td> @php  echo $appointment->serviceBadge;  @endphp </td>
                                         @endif
                                         <td>
@@ -48,12 +49,11 @@
                                                     data-resourse="{{ $appointment }}">
                                                     <i class="las la-desktop"></i> @lang('Details')
                                                 </button>
-                                                @if (request()->routeIs('doctor.appointment.new'))
-
+                                                @if (request()->routeIs('patient.appointment.new'))
                                                     <button type="button"
                                                         class="btn btn-sm btn-outline--danger confirmationBtn"
                                                         @if (!$appointment->is_delete && !$appointment->payment_status) ''  @else disabled @endif
-                                                        data-action="{{ route('doctor.appointment.remove', $appointment->id) }}"
+                                                        data-action="{{ route('patient.appointment.remove', $appointment->id) }}"
                                                         data-question="@lang('Are you sure to remove this appointment')?">
                                                         <i class="la la-trash"></i> @lang('Trash')
                                                     </button>
@@ -134,11 +134,10 @@
                 </div>
 
                 <div class="modal-footer">
-
                     <form action="" class="dealing-route" method="post">
                         @csrf
-                        <button type="submit" class="btn btn-outline--success btn-sm serviceDoneBtn"><i
-                                class="las la-check"></i> @lang('Done')</button>
+                        {{-- <button type="submit" class="btn btn-outline--success btn-sm serviceDoneBtn"><i
+                                class="las la-check"></i> @lang('Done')</button> --}}
                         <button type="button" class="btn btn--dark btn-sm"
                             data-bs-dismiss="modal">@lang('Close')</button>
                     </form>
@@ -154,9 +153,9 @@
 @push('breadcrumb-plugins')
     <x-search-form />
 
-    <a href="{{ route('doctor.appointment.booking') }}" type="button" class="btn btn-sm btn-outline--primary h-45">
+    {{-- <a href="{{ route('patient.appointment.booking') }}" type="button" class="btn btn-sm btn-outline--primary h-45">
         <i class="las la-plus"></i>@lang('Make New')
-    </a>
+    </a> --}}
 @endpush
 
 @push('script')
@@ -171,7 +170,7 @@
                 $('.email').text(resourse.email);
                 $('.mobile').text(resourse.mobile);
                 $('.bookingDate').text(resourse.booking_date);
-                $('.timeSerial').text(resourse.time_serial);
+                $('.timeSerial').text(resourse.starting + " - " + resourse.ending);
                 $('.age').text(resourse.age);
                 $('.appointment_fees').text(resourse.doctor.fees + ' ' + `{{ $general->cur_text }}`);
                 $('.disease').text(resourse.disease);

@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class RegisterController extends Controller
 {
@@ -66,12 +67,25 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'name' => ['required', 'string', 'max:191'],
+            'first_name' => ['required', 'string', 'max:191'],
+            'last_name' => ['required', 'string', 'max:191'],
             'username' => ['required', 'string', 'max:10', 'unique:patients,username'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:patients'],
             'mobile' => ['required', 'string', 'max:191'],
             'address' => ['required', 'string', 'max:191'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'gender' => ['required', 'string', Rule::in(['male', 'female', 'transgender', 'other'])],
+            'post_office' => ['required', 'string', 'max:191'],
+            'city' => ['required', 'string', 'max:191'],
+            'nationality' => ['required', 'string', 'max:191'],
+            'social_security_code' => ['required', 'string', 'max:191'],
+            'language' => ['required', 'string', 'max:191'],
+            'lease_payments' => ['required', 'string', 'max:191'],
+            'how_find_us' => ['required', 'string', 'max:191'],
+        ], [
+            'mobile.required' => 'Phone number is required',
+            'mobile.string' => 'Phone number must be string',
+            'mobile.max' => 'Phone number must not be greater than 191 characters',
         ]);
     }
 
@@ -84,12 +98,21 @@ class RegisterController extends Controller
     protected function create(array $data)
     {
         return Patient::create([
-            'name' => $data['name'],
+            'first_name' => $data['first_name'],
+            'last_name' => $data['last_name'],
             'username' => $data['username'],
             'email' => $data['email'],
             'mobile' => $data['mobile'],
             'address' => $data['address'],
             'password' => Hash::make($data['password']),
+            'gender' => $data['gender'],
+            'post_office' => $data['post_office'],
+            'city' => $data['city'],
+            'nationality' => $data['nationality'],
+            'social_security_code' => $data['social_security_code'],
+            'language' => $data['language'],
+            'lease_payments' => $data['lease_payments'],
+            'how_find_us' => $data['how_find_us'],
         ]);
     }
 }

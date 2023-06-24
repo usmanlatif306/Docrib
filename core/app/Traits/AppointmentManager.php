@@ -70,7 +70,6 @@ trait AppointmentManager
                 'title' => "(" . $appointment->chair . ") " . $appointment->procedure,
                 'start' => $starting_date->toDateTimeString(),
                 'end' => $ending_date->toDateTimeString(),
-                // 'textColor' => 'Appointment at ' . carbon($appointment->starting)->format('h:i A') . ' - ' . carbon($appointment->ending)->format('h:i A') . ' at ' . $appointment->chair . ' on ' . carbon($appointment->booking_date)->toFormattedDateString() . ' for ' . $appointment->doctor?->name . ' for ' . $appointment->procedure . '.'
                 'textColor' => 'Doctor:' . $appointment->doctor?->name . ',Time;' . carbon($appointment->starting)->format('h:i A') . ' - ' . carbon($appointment->ending)->format('h:i A') . ',Chair:' . $appointment->chair . ',Procedure:' . $appointment->procedure
             ];
         }
@@ -269,8 +268,10 @@ trait AppointmentManager
             $appointment->delete_by_staff = auth()->guard('staff')->id();
         } elseif ($this->userType == 'doctor') {
             $appointment->delete_by_doctor = auth()->guard('doctor')->id();
-        } else {
+        } elseif ($this->userType == 'assistant') {
             $appointment->delete_by_assistant = auth()->guard('assistant')->id();
+        } else {
+            $appointment->delete_by_patient = auth()->guard('patient')->id();
         }
 
         $appointment->save();
@@ -301,12 +302,19 @@ trait AppointmentManager
     {
         if ($this->userType == 'admin' || $this->userType == 'staff') {
             $appointments  = $appointments->hasDoctor();
-        } else {
+        }
+
+        if ($this->userType == 'doctor') {
             $appointments->where('doctor_id', auth()->guard('doctor')->id());
         }
 
         if ($this->userType == 'staff') {
             $appointments  = $appointments->where('added_staff_id', auth()->guard('staff')->id());
+        }
+
+        if ($this->userType == 'patient') {
+            $patient = auth()->guard('patient')->user();
+            $appointments  = $appointments->where(fn ($q) => $q->where('email', $patient->email)->orWhere('mobile', $patient->mobile));
         }
 
         $appointments = $appointments->searchable(['name', 'email', 'disease'])->orderBy('id', 'DESC')->paginate(getPaginate());
@@ -335,7 +343,7 @@ trait AppointmentManager
     public function serviceTrashed()
     {
         $pageTitle    = 'Trashed Appointments';
-        $appointments = Appointment::where('is_delete', Status::YES)->with('deletedByStaff', 'deletedByDoctor', 'deletedByAssistant', 'doctor', 'staff', 'assistant');
+        $appointments = Appointment::with(['deletedByStaff', 'deletedByDoctor', 'deletedByAssistant', 'doctor', 'staff', 'assistant'])->where('is_delete', Status::YES);
         $appointments = $this->detectUserType($appointments);
 
         return view($this->userType . '.appointment.index', compact('pageTitle', 'appointments'));
