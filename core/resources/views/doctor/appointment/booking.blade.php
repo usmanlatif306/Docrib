@@ -91,47 +91,12 @@
 
                 <div class="card b-radius--10 overflow-hidden box--shadow1 mt-4">
                     <div class="card-body p-0">
-                        <div class="row p-3 bg--white">
+                        <div class="p-3 bg--white">
                             <h3 class="py-2">@lang('Patient Information')</h3>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>@lang('Full Name')</label>
-                                    <input type="text" name="name" class="form-control" value="{{ old('name') }}"
-                                        required>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>@lang('Age')</label>
-                                    <div class="input-group">
-                                        <input type="number" name="age" step="any" class="form-control"
-                                            value="{{ old('age') }}" required>
-                                        <span class="input-group-text">
-                                            @lang('Years')
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>@lang('E-mail')</label>
-                                    <input type="email" name="email" class="form-control" value="{{ old('email') }}"
-                                        required>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label">@lang('Mobile')
-                                        <i class="fa fa-info-circle text--primary" title="@lang('Add the country code by general setting. Otherwise, SMS won\'t send to that number.')">
-                                        </i>
-                                    </label>
-                                    <div class="input-group">
-                                        <span class="input-group-text">{{ $general->country_code }}</span>
-                                        <input type="number" name="mobile" value="{{ old('mobile') }}"
-                                            class="form-control" autocomplete="off" required>
-                                    </div>
-                                </div>
-                            </div>
+
+                            {{-- select patient livewire module --}}
+                            @livewire('appointment.select-patient')
+
                             <div class="form-group">
                                 <label>@lang('Disease Details')</label>
                                 <textarea name="disease" class="form-control" rows="2" required></textarea>

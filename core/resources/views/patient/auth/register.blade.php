@@ -51,7 +51,7 @@
                                         <div class="col-lg-6">
                                             <div class="form-group">
                                                 <label>@lang('Phone Number')</label>
-                                                <input type="tel" class="form-control" value="{{ old('mobile') }}"
+                                                <input type="text" class="form-control" value="{{ old('mobile') }}"
                                                     name="mobile" required>
                                             </div>
                                         </div>
